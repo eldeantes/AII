@@ -133,47 +133,30 @@ def almacenar_bd_menu():
     almacenar_bd(simpledialog.askinteger('Cargar resultados', 'Número de páginas',minvalue=3))
 
 root = Tk()
-'''
-menubar = Menu(root)
-filemenu = Menu(menubar, tearoff=0)
-filemenu.add_command(label="Cargar", command=almacenar_bd_menu)
-filemenu.add_command(label="Mostrar", command=listar_bd)
-filemenu.add_separator()
-filemenu.add_command(label="Salir", command=root.quit)
-menubar.add_cascade(label="Datos", menu=filemenu)
 
-editmenu = Menu(menubar, tearoff=0)
-editmenu.add_command(label="Noticia", command=buscar_bd_noticia)
-editmenu.add_command(label="Autor", command=buscar_bd_autor)
-editmenu.add_command(label="Fecha", command=hello)
-menubar.add_cascade(label="Buscar", menu=editmenu)
-
-
-root.config(menu=menubar)
-'''
 frame = Frame(root)
 frame.pack()
 
 button1 = Button(frame, 
-                   text="Almacenar", 
+                   text="Almacenar Productos", 
                    command=almacenar_bd_menu)
 button1.pack(side=LEFT)
 
 
 button2 = Button(frame, 
-                   text="Ordenar", 
-                   command=listar_bd)
+                   text="Ordenar por Precio Unitario", 
+                   command=listar_bd_orden_pu)
 button2.pack(side=LEFT)
 
 button3 = Button(frame, 
-                   text="Mostrar", 
-                   command=buscar_bd_autor)
+                   text="Mostrar Marca", 
+                   command=buscar_bd_marca)
 button3.pack(side=LEFT)
 
 
 button4 = Button(frame, 
-                   text="Buscar", 
-                   command=listar_bd)
+                   text="Buscar Rebajas", 
+                   command=buscar_rebajas)
 button4.pack(side=LEFT)
 
 
