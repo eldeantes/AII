@@ -132,6 +132,52 @@ def buscar_bd_autor():
 def almacenar_bd_menu():
     almacenar_bd(simpledialog.askinteger('Cargar resultados', 'Número de páginas',minvalue=3))
 
+
+def buscar_bd_marca():
+    def listar_busqueda(event):
+        conn = sqlite3.connect('ulabox.db')
+        conn.text_factory = str
+        s = "%"+w.get()+"%" 
+        cursor = conn.execute("""SELECT NOMBRE, PRECIO FROM PRODUCTO WHERE MARCA LIKE ?""",(s,)) # al ser de tipo string, el ? le pone comillas simples
+        imprimir_por_marca(cursor)
+        conn.close()
+    
+    v = Toplevel()
+    lb = Label(v, text="Buscar productos por marca:")
+    lb.pack(side = LEFT)
+    conn = sqlite3.connect('ulabox.db')
+    conn.text_factory = str
+    cursor = conn.execute("SELECT MARCA FROM PRODUCTO")
+
+    values =[]
+    for row in cursor:
+        values.append(row[0])
+
+    w = Spinbox(v, values=values)
+    w.bind("<Return>", listar_busqueda)
+    w.pack(side = LEFT)
+
+
+    def imprimir_por_marca(cursor):
+        v = Toplevel()
+        sc = Scrollbar(v)
+        sc.pack(side=RIGHT, fill=Y)
+        lb = Listbox(v, width=150, yscrollcommand=sc.set)
+        for row in cursor:
+            nombre=row[0]
+            lb.insert(END,"\n")
+            s = 'PRODUCTO: '+ str(nombre)
+            lb.insert(END,s)
+
+            precio=row[0]
+            lb.insert(END,"\n")
+            s = 'PRECIO: '+ str(nombre)
+            lb.insert(END,s)
+            
+            lb.insert(END,'--------------------------------------------')
+        lb.pack(side = LEFT, fill = BOTH)
+        sc.config(command = lb.yview)
+
 root = Tk()
 
 frame = Frame(root)
