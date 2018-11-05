@@ -1,9 +1,8 @@
 from bs4 import BeautifulSoup
 import urllib.request, re, sqlite3
-import tkinter as tk
 from tkinter import simpledialog
+from tkinter import messagebox
 from tkinter import *
-
 
 
 def procesar_pagina(d:str):
@@ -25,7 +24,6 @@ def procesar_pagina(d:str):
             print('CONTENIDO: '+n.find("div", class_="news-content").string+'\n\n\n')
         except:
             print('CONTENIDO: '+n.find("div", class_="news-content").find(text=True, recursive=False)+'\n\n\n')
-
 
     return documento
 
@@ -131,23 +129,20 @@ def buscar_bd_autor():
     w.bind("<Return>", listar_busqueda)
     w.pack(side = LEFT)
 
-def hello():
-    print("hola")
-
 def almacenar_bd_menu():
     almacenar_bd(simpledialog.askinteger('Cargar resultados', 'Número de páginas',minvalue=3))
 
-root = tk.Tk()
+root = Tk()
 '''
-menubar = tk.Menu(root)
-filemenu = tk.Menu(menubar, tearoff=0)
+menubar = Menu(root)
+filemenu = Menu(menubar, tearoff=0)
 filemenu.add_command(label="Cargar", command=almacenar_bd_menu)
 filemenu.add_command(label="Mostrar", command=listar_bd)
 filemenu.add_separator()
 filemenu.add_command(label="Salir", command=root.quit)
 menubar.add_cascade(label="Datos", menu=filemenu)
 
-editmenu = tk.Menu(menubar, tearoff=0)
+editmenu = Menu(menubar, tearoff=0)
 editmenu.add_command(label="Noticia", command=buscar_bd_noticia)
 editmenu.add_command(label="Autor", command=buscar_bd_autor)
 editmenu.add_command(label="Fecha", command=hello)
@@ -156,30 +151,30 @@ menubar.add_cascade(label="Buscar", menu=editmenu)
 
 root.config(menu=menubar)
 '''
-frame = tk.Frame(root)
+frame = Frame(root)
 frame.pack()
 
-button1 = tk.Button(frame, 
+button1 = Button(frame, 
                    text="Almacenar", 
                    command=almacenar_bd_menu)
-button1.pack(side=tk.LEFT)
+button1.pack(side=LEFT)
 
 
-button2 = tk.Button(frame, 
+button2 = Button(frame, 
                    text="Ordenar", 
                    command=listar_bd)
-button2.pack(side=tk.LEFT)
+button2.pack(side=LEFT)
 
-button3 = tk.Button(frame, 
+button3 = Button(frame, 
                    text="Mostrar", 
                    command=buscar_bd_autor)
-button3.pack(side=tk.LEFT)
+button3.pack(side=LEFT)
 
 
-button4 = tk.Button(frame, 
+button4 = Button(frame, 
                    text="Buscar", 
                    command=listar_bd)
-button4.pack(side=tk.LEFT)
+button4.pack(side=LEFT)
 
 
 root.mainloop()
