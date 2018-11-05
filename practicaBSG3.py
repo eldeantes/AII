@@ -84,9 +84,6 @@ def imprimir_etiqueta_orden_pu(cursor):
     lb.pack(side = LEFT, fill = BOTH)
     sc.config(command = lb.yview)    
 
-#def almacenar_bd_menu():
-#    almacenar_bd(simpledialog.askinteger('Cargar resultados', 'Número de páginas',minvalue=3))
-
 def buscar_bd_marca():
     def listar_busqueda(event):
         conn = sqlite3.connect('ulabox.db')
@@ -135,7 +132,7 @@ def buscar_bd_marca():
 def buscar_rebajas():
     conn = sqlite3.connect('ulabox.db')
     conn.text_factory = str
-    cursor = conn.execute("""SELECT DENOMINACION, OLDPRECIO, PRECIO FROM PRODUCTO WHERE OLDPRECIO!=NULL""") # al ser de tipo string, el ? le pone comillas simples
+    cursor = conn.execute("""SELECT DENOMINACION, OLDPRECIO, PRECIO FROM PRODUCTO WHERE OLDPRECIO!=NULL""") # Si es != null es que tiene rebaja
     imprimir_rebajas(cursor)
     conn.close()
 
