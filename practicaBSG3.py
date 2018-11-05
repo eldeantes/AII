@@ -157,6 +157,31 @@ def buscar_bd_marca():
         lb.pack(side = LEFT, fill = BOTH)
         sc.config(command = lb.yview)
 
+def imprimir_rebajas(cursor):
+    v = Toplevel()
+    sc = Scrollbar(v)
+    sc.pack(side=RIGHT, fill=Y)
+    lb = Listbox(v, width=150, yscrollcommand=sc.set)
+    for row in cursor:
+        nombre=row[0]
+        lb.insert(END,"\n")
+        s = 'PRODUCTO: '+ str(nombre)
+        lb.insert(END,s)
+
+        precioAntiguo=row[1]
+        lb.insert(END,"\n")
+        s = 'PRECIO ANTIGUO: '+ str(precioAntiguo)
+        lb.insert(END,s)
+
+        precioFinal=row[2]
+        lb.insert(END,"\n")
+        s = 'PRECIO: '+ str(precioFinal)
+        lb.insert(END,s)
+        
+        lb.insert(END,'--------------------------------------------')
+    lb.pack(side = LEFT, fill = BOTH)
+    sc.config(command = lb.yview)
+
 def ventana_principal():
     root = Tk()
 
