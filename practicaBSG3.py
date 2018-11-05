@@ -113,7 +113,7 @@ def buscar_bd_marca():
             s = 'PRODUCTO: '+ str(nombre)
             lb.insert(END,s)
 
-            precio=row[0]
+            precio=row[1]
             lb.insert(END,"\n")
             s = 'PRECIO: '+ str(precio)
             lb.insert(END,s)
