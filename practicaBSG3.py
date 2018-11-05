@@ -4,64 +4,57 @@ from tkinter import simpledialog
 from tkinter import messagebox
 from tkinter import *
 
-
 def procesar_pagina(d:str):
     fichero = urllib.request.urlopen(d)
     documento = BeautifulSoup(fichero, "lxml")
-    news = documento.find_all("div", class_="news-summary")
+    productos = documento.find_all("article", class_="product-item--grid")
 
-    for n in news:
-        print('TÍTULO: '+n.find("div", class_="center-content").h2.a.string+'\n')
-
-        print('ENLACE: '+n.find("div", class_="center-content").h2.a.get("href")+'\n')
-
-        print('AUTOR: '+n.find("div", class_="news-submitted").find_all("a")[1].string+'\n')
-
-        print('HORA PUBLICACIÓN: '+n.find("div", class_="news-submitted").find_all("span", class_="ts visible")[0].string+'\n')
-        #print('HORA PUBLICACIÓN: '+str(n.find("div", class_="news-submitted").find_all("span", class_="ts visible")[0])+'\n')
-
-        try:
-            print('CONTENIDO: '+n.find("div", class_="news-content").string+'\n\n\n')
-        except:
-            print('CONTENIDO: '+n.find("div", class_="news-content").find(text=True, recursive=False)+'\n\n\n')
+    for n in productos:
+        print("DENOMINACIÓN:  " + n.find("h3", class_="product-item__name").find_all("a")[0].string+'\n')
+        print("MARCA:  "+ n.find("h4", class_="product-item__brand").find_all("a")[0].string+'\n')
+        print("PRECIO POR KILO/LITRO:   "+re.sub("[^0-9,]", "", n.find("small", class_="product-item__ppu").string).replace(",",".")+'\n')
+        if(len(n.find("span", class_="product-grid-footer__price").contents)==2):
+            print("PRECIO ANTIGUO:  "+n.find("span", class_="product-grid-footer__price").find_all("del")[0].string+'\n')
+        print("PRECIO:  "+n['data-price']+'\n')
+        print("----------------------------------------------------------------\n\n\n")
 
     return documento
 
 
-def almacenar_bd(numero_paginas):
-    conn = sqlite3.connect('test.db')
+def almacenar_bd():
+    conn = sqlite3.connect('ulabox.db')
     conn.text_factory = str  # para evitar problemas con el conjunto de caracteres que maneja la BD
-    conn.execute("DROP TABLE IF EXISTS NOTICIAS")   
-    conn.execute("""CREATE TABLE NOTICIAS
+    conn.execute("DROP TABLE IF EXISTS PRODUCTO")   
+    conn.execute("""CREATE TABLE PRODUCTO
        (ID INTEGER PRIMARY KEY  AUTOINCREMENT,
-       TITULO           TEXT    NOT NULL,
-       ENLACE           TEXT    NOT NULL,
-       AUTOR            TEXT    NOT NULL,
-       FECHA            TEXT    NOT NULL,
-       CONTENIDO       TEXT    NOT NULL);""")
+       DENOMINACION     TEXT    NOT NULL,
+       MARCA            TEXT    NOT NULL,
+       PRECIOKGL        NUMBER    NOT NULL,
+       OLDPRECIO        TEXT    ,
+       PRECIO           TEXT    NOT NULL);""")
 
-    for i in range(1,numero_paginas+1):
-        documento = procesar_pagina("https://www.meneame.net/?page="+str(i))
-        news = documento.find_all("div", class_="center-content")
+   
+    documento = procesar_pagina("https://www.ulabox.com/campaign/productos-sin-gluten#gref")
+    productos = documento.find_all("article", class_="product-item--grid")
 
-        for n in news:
-            titulo=n.h2.a.string
+    for n in productos:
+        denominacion=n.find("h3", class_="product-item__name").find_all("a")[0].string
 
-            enlace=n.h2.a.get("href")
+        marca=n.find("h4", class_="product-item__brand").find_all("a")[0].string
 
-            autor=n.find("div", class_="news-submitted").find_all("a")[1].string
+        precio=n['data-price']
 
-            hora=n.find("div", class_="news-submitted").find_all("span", class_="ts visible")[0].string
+        preciokgl=float(re.sub("[^0-9,]", "", n.find("small", class_="product-item__ppu").string).replace(",","."))
 
-            try:
-                contenido=''+n.find("div", class_="news-content").string
-            except:
-                contenido=''+n.find("div", class_="news-content").find(text=True, recursive=False)
+        if(len(n.find("span", class_="product-grid-footer__price").contents)==2):
+            oldprecio = n.find("span", class_="product-grid-footer__price").find_all("del")[0].string
+        else:
+            oldprecio = ''
 
-            conn.execute("""INSERT INTO NOTICIAS (TITULO, ENLACE, AUTOR, FECHA, CONTENIDO) VALUES (?,?,?,?,?)""",(titulo,enlace,autor,hora,contenido))
-            conn.commit()
+        conn.execute("""INSERT INTO PRODUCTO (DENOMINACION, MARCA, PRECIOKGL, OLDPRECIO, PRECIO) VALUES (?,?,?,?,?)""",(denominacion,marca,preciokgl,oldprecio,precio))
+        conn.commit()
 
-    cursor = conn.execute("SELECT COUNT(*) FROM NOTICIAS")
+    cursor = conn.execute("SELECT COUNT(*) FROM PRODUCTO")
     messagebox.showinfo( "Base Datos", "Base de datos creada correctamente \nHay " + str(cursor.fetchone()[0]) + " registros")
     conn.close()
 
@@ -79,7 +72,7 @@ def imprimir_etiqueta_orden_pu(cursor):
     lb = Listbox(v, width=150, yscrollcommand=sc.set)
     for row in cursor:
         lb.insert(END,'PRODUCTO: '+row[0])
-        lb.insert(END,'PRECIO POR KG O L: '+row[1])
+        lb.insert(END,'PRECIO POR KG O L: '+str(row[1]))
         lb.insert(END,'--------------------------------------------')
     lb.pack(side = LEFT, fill = BOTH)
     sc.config(command = lb.yview)    
@@ -132,34 +125,34 @@ def buscar_bd_marca():
 def buscar_rebajas():
     conn = sqlite3.connect('ulabox.db')
     conn.text_factory = str
-    cursor = conn.execute("""SELECT DENOMINACION, OLDPRECIO, PRECIO FROM PRODUCTO WHERE OLDPRECIO!=NULL""") # Si es != null es que tiene rebaja
+    cursor = conn.execute("""SELECT DENOMINACION, OLDPRECIO, PRECIO FROM PRODUCTO WHERE OLDPRECIO!=''""") # Si es != null es que tiene rebaja
     imprimir_rebajas(cursor)
     conn.close()
 
-    def imprimir_rebajas(cursor):
-        v = Toplevel()
-        sc = Scrollbar(v)
-        sc.pack(side=RIGHT, fill=Y)
-        lb = Listbox(v, width=150, yscrollcommand=sc.set)
-        for row in cursor:
-            nombre=row[0]
-            lb.insert(END,"\n")
-            s = 'PRODUCTO: '+ str(nombre)
-            lb.insert(END,s)
+def imprimir_rebajas(cursor):
+    v = Toplevel()
+    sc = Scrollbar(v)
+    sc.pack(side=RIGHT, fill=Y)
+    lb = Listbox(v, width=150, yscrollcommand=sc.set)
+    for row in cursor:
+        nombre=row[0]
+        lb.insert(END,"\n")
+        s = 'PRODUCTO: '+ str(nombre)
+        lb.insert(END,s)
 
-            precioAntiguo=row[1]
-            lb.insert(END,"\n")
-            s = 'PRECIO ANTIGUO: '+ str(precioAntiguo)
-            lb.insert(END,s)
+        precioAntiguo=row[1]
+        lb.insert(END,"\n")
+        s = 'PRECIO ANTIGUO: '+ str(precioAntiguo)
+        lb.insert(END,s)
 
-            precioFinal=row[2]
-            lb.insert(END,"\n")
-            s = 'PRECIO: '+ str(precioFinal)
-            lb.insert(END,s)
-            
-            lb.insert(END,'--------------------------------------------')
-        lb.pack(side = LEFT, fill = BOTH)
-        sc.config(command = lb.yview)
+        precioFinal=row[2]
+        lb.insert(END,"\n")
+        s = 'PRECIO: '+ str(precioFinal)
+        lb.insert(END,s)
+        
+        lb.insert(END,'--------------------------------------------')
+    lb.pack(side = LEFT, fill = BOTH)
+    sc.config(command = lb.yview)
 
 def ventana_principal():
     root = Tk()
