@@ -68,7 +68,7 @@ def almacenar_bd(numero_paginas):
 def listar_bd_orden_pu():
     conn = sqlite3.connect('ulabox.db')
     conn.text_factory = str  
-    cursor = conn.execute("SELECT DENOMINACION, PRECIOKGL FROM PRODUCTOS ORDER BY PRECIOKGL ASC")
+    cursor = conn.execute("SELECT DENOMINACION, PRECIOKGL FROM PRODUCTO ORDER BY PRECIOKGL ASC")
     imprimir_etiqueta_orden_pu(cursor)
     conn.close()
 
@@ -78,46 +78,21 @@ def imprimir_etiqueta_orden_pu(cursor):
     sc.pack(side=RIGHT, fill=Y)
     lb = Listbox(v, width=150, yscrollcommand=sc.set)
     for row in cursor:
-        lb.insert(END,row[0])
-        lb.insert(END,row[1])
+        lb.insert(END,'PRODUCTO: '+row[0])
+        lb.insert(END,'PRECIO POR KG O L: '+row[1])
         lb.insert(END,'--------------------------------------------')
     lb.pack(side = LEFT, fill = BOTH)
     sc.config(command = lb.yview)    
 
-'''def buscar_bd_autor():
-    def listar_busqueda(event):
-        conn = sqlite3.connect('test.db')
-        conn.text_factory = str
-        s = "%"+w.get()+"%" 
-        cursor = conn.execute("""SELECT TITULO, ENLACE, AUTOR, FECHA, CONTENIDO  FROM NOTICIAS WHERE AUTOR LIKE ?""",(s,)) # al ser de tipo string, el ? le pone comillas simples
-        imprimir_etiqueta(cursor)
-        conn.close()
-    
-    v = Toplevel()
-    lb = Label(v, text="Buscar noticias de autor:")
-    lb.pack(side = LEFT)
-    conn = sqlite3.connect('test.db')
-    conn.text_factory = str
-    cursor = conn.execute("SELECT AUTOR FROM NOTICIAS")
-
-    values =[]
-    for row in cursor:
-        values.append(row[0])
-
-    w = Spinbox(v, values=values)
-    w.bind("<Return>", listar_busqueda)
-    w.pack(side = LEFT)'''
-
 #def almacenar_bd_menu():
 #    almacenar_bd(simpledialog.askinteger('Cargar resultados', 'Número de páginas',minvalue=3))
-
 
 def buscar_bd_marca():
     def listar_busqueda(event):
         conn = sqlite3.connect('ulabox.db')
         conn.text_factory = str
         s = "%"+w.get()+"%" 
-        cursor = conn.execute("""SELECT NOMBRE, PRECIO FROM PRODUCTO WHERE MARCA LIKE ?""",(s,)) # al ser de tipo string, el ? le pone comillas simples
+        cursor = conn.execute("""SELECT DENOMINACION, PRECIO FROM PRODUCTO WHERE MARCA LIKE ?""",(s,)) # al ser de tipo string, el ? le pone comillas simples
         imprimir_por_marca(cursor)
         conn.close()
     
@@ -157,30 +132,37 @@ def buscar_bd_marca():
         lb.pack(side = LEFT, fill = BOTH)
         sc.config(command = lb.yview)
 
-def imprimir_rebajas(cursor):
-    v = Toplevel()
-    sc = Scrollbar(v)
-    sc.pack(side=RIGHT, fill=Y)
-    lb = Listbox(v, width=150, yscrollcommand=sc.set)
-    for row in cursor:
-        nombre=row[0]
-        lb.insert(END,"\n")
-        s = 'PRODUCTO: '+ str(nombre)
-        lb.insert(END,s)
+def buscar_rebajas():
+    conn = sqlite3.connect('ulabox.db')
+    conn.text_factory = str
+    cursor = conn.execute("""SELECT DENOMINACION, OLDPRECIO, PRECIO FROM PRODUCTO WHERE OLDPRECIO!=NULL""") # al ser de tipo string, el ? le pone comillas simples
+    imprimir_rebajas(cursor)
+    conn.close()
 
-        precioAntiguo=row[1]
-        lb.insert(END,"\n")
-        s = 'PRECIO ANTIGUO: '+ str(precioAntiguo)
-        lb.insert(END,s)
+    def imprimir_rebajas(cursor):
+        v = Toplevel()
+        sc = Scrollbar(v)
+        sc.pack(side=RIGHT, fill=Y)
+        lb = Listbox(v, width=150, yscrollcommand=sc.set)
+        for row in cursor:
+            nombre=row[0]
+            lb.insert(END,"\n")
+            s = 'PRODUCTO: '+ str(nombre)
+            lb.insert(END,s)
 
-        precioFinal=row[2]
-        lb.insert(END,"\n")
-        s = 'PRECIO: '+ str(precioFinal)
-        lb.insert(END,s)
-        
-        lb.insert(END,'--------------------------------------------')
-    lb.pack(side = LEFT, fill = BOTH)
-    sc.config(command = lb.yview)
+            precioAntiguo=row[1]
+            lb.insert(END,"\n")
+            s = 'PRECIO ANTIGUO: '+ str(precioAntiguo)
+            lb.insert(END,s)
+
+            precioFinal=row[2]
+            lb.insert(END,"\n")
+            s = 'PRECIO: '+ str(precioFinal)
+            lb.insert(END,s)
+            
+            lb.insert(END,'--------------------------------------------')
+        lb.pack(side = LEFT, fill = BOTH)
+        sc.config(command = lb.yview)
 
 def ventana_principal():
     root = Tk()
@@ -197,8 +179,8 @@ def ventana_principal():
     button3 = Button(frame, text="Mostrar Marca", command=buscar_bd_marca)
     button3.pack(side=LEFT)
 
-    '''button4 = Button(frame, text="Buscar Rebajas", command=buscar_rebajas)
-    button4.pack(side=LEFT)'''
+    button4 = Button(frame, text="Buscar Rebajas", command=buscar_rebajas)
+    button4.pack(side=LEFT)
 
     root.mainloop()
 
