@@ -65,15 +65,14 @@ def almacenar_bd(numero_paginas):
     messagebox.showinfo( "Base Datos", "Base de datos creada correctamente \nHay " + str(cursor.fetchone()[0]) + " registros")
     conn.close()
 
-
-def listar_bd():
-    conn = sqlite3.connect('test.db')
+def listar_bd_orden_pu():
+    conn = sqlite3.connect('ulabox.db')
     conn.text_factory = str  
-    cursor = conn.execute("SELECT TITULO, ENLACE, AUTOR, FECHA, CONTENIDO FROM NOTICIAS ORDER BY TITULO")
-    imprimir_etiqueta(cursor)
+    cursor = conn.execute("SELECT DENOMINACION, PRECIOKGL FROM PRODUCTOS ORDER BY PRECIOKGL ASC")
+    imprimir_etiqueta_orden_pu(cursor)
     conn.close()
-    
-def imprimir_etiqueta(cursor):
+
+def imprimir_etiqueta_orden_pu(cursor):
     v = Toplevel()
     sc = Scrollbar(v)
     sc.pack(side=RIGHT, fill=Y)
@@ -81,31 +80,11 @@ def imprimir_etiqueta(cursor):
     for row in cursor:
         lb.insert(END,row[0])
         lb.insert(END,row[1])
-        lb.insert(END,row[2])
-        lb.insert(END,row[3])
-        lb.insert(END,row[4])
         lb.insert(END,'--------------------------------------------')
     lb.pack(side = LEFT, fill = BOTH)
-    sc.config(command = lb.yview)
+    sc.config(command = lb.yview)    
 
-
-def buscar_bd_noticia():
-    def listar_busqueda(event):
-        conn = sqlite3.connect('test.db')
-        conn.text_factory = str
-        s = "%"+en.get()+"%" 
-        cursor = conn.execute("""SELECT TITULO, ENLACE, AUTOR, FECHA, CONTENIDO  FROM NOTICIAS WHERE CONTENIDO LIKE ?""",(s,)) # al ser de tipo string, el ? le pone comillas simples
-        imprimir_etiqueta(cursor)
-        conn.close()
-    
-    v = Toplevel()
-    lb = Label(v, text="Buscar noticia:")
-    lb.pack(side = LEFT)
-    en = Entry(v)
-    en.bind("<Return>", listar_busqueda)
-    en.pack(side = LEFT)
-
-def buscar_bd_autor():
+'''def buscar_bd_autor():
     def listar_busqueda(event):
         conn = sqlite3.connect('test.db')
         conn.text_factory = str
@@ -127,10 +106,10 @@ def buscar_bd_autor():
 
     w = Spinbox(v, values=values)
     w.bind("<Return>", listar_busqueda)
-    w.pack(side = LEFT)
+    w.pack(side = LEFT)'''
 
-def almacenar_bd_menu():
-    almacenar_bd(simpledialog.askinteger('Cargar resultados', 'Número de páginas',minvalue=3))
+#def almacenar_bd_menu():
+#    almacenar_bd(simpledialog.askinteger('Cargar resultados', 'Número de páginas',minvalue=3))
 
 
 def buscar_bd_marca():
@@ -178,34 +157,26 @@ def buscar_bd_marca():
         lb.pack(side = LEFT, fill = BOTH)
         sc.config(command = lb.yview)
 
-root = Tk()
+def ventana_principal():
+    root = Tk()
 
-frame = Frame(root)
-frame.pack()
+    frame = Frame(root)
+    frame.pack()
 
-button1 = Button(frame, 
-                   text="Almacenar Productos", 
-                   command=almacenar_bd_menu)
-button1.pack(side=LEFT)
+    button1 = Button(frame, text="Almacenar Productos", command=almacenar_bd)
+    button1.pack(side=LEFT)
 
+    button2 = Button(frame, text="Ordenar por Precio Unitario", command=listar_bd_orden_pu)
+    button2.pack(side=LEFT)
 
-button2 = Button(frame, 
-                   text="Ordenar por Precio Unitario", 
-                   command=listar_bd_orden_pu)
-button2.pack(side=LEFT)
+    button3 = Button(frame, text="Mostrar Marca", command=buscar_bd_marca)
+    button3.pack(side=LEFT)
 
-button3 = Button(frame, 
-                   text="Mostrar Marca", 
-                   command=buscar_bd_marca)
-button3.pack(side=LEFT)
+    '''button4 = Button(frame, text="Buscar Rebajas", command=buscar_rebajas)
+    button4.pack(side=LEFT)'''
 
+    root.mainloop()
 
-button4 = Button(frame, 
-                   text="Buscar Rebajas", 
-                   command=buscar_rebajas)
-button4.pack(side=LEFT)
-
-
-root.mainloop()
-
+if __name__ == "__main__":
+    ventana_principal()
 
