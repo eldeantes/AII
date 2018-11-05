@@ -126,7 +126,7 @@ def buscar_bd_marca():
     lb.pack(side = LEFT)
     conn = sqlite3.connect('ulabox.db')
     conn.text_factory = str
-    cursor = conn.execute("SELECT MARCA FROM PRODUCTO")
+    cursor = conn.execute("SELECT DISTINCT MARCA FROM PRODUCTO")
 
     values =[]
     for row in cursor:
@@ -150,7 +150,7 @@ def buscar_bd_marca():
 
             precio=row[0]
             lb.insert(END,"\n")
-            s = 'PRECIO: '+ str(nombre)
+            s = 'PRECIO: '+ str(precio)
             lb.insert(END,s)
             
             lb.insert(END,'--------------------------------------------')
