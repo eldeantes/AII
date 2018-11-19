@@ -2,7 +2,7 @@
 import os, re, shutil, urllib.request
 from datetime import datetime
 from whoosh.index import create_in, open_dir
-from whoosh.fields import Schema, TEXT, DATETIME, ID
+from whoosh.fields import Schema, KEYWORD, TEXT, DATETIME, ID
 from whoosh.qparser import QueryParser, MultifieldParser
 from whoosh import qparser
 from tkinter import *
@@ -27,14 +27,14 @@ def imprime_eventos():
     for evento in eventos:
         titulo = ""#TODO
         descripcion = "" #TODO
-        categoria = ""#TODO
+        categorias = ""#TODO
         fechaInicio = ""#TODO
         fechaFin= ""#TODO
 
         with open('Eventos/'+str(i)+'.txt', 'w') as f:
             f.write(titulo+'\n')
             f.write(descripcion+'\n')
-            f.write(categoria+'\n')
+            f.write(categorias+'\n')
             f.write(fechaInicio+'\n')
             f.write(fechaFin+'\n')
         i=i+1
@@ -85,7 +85,7 @@ def imprimir_resultados(results):
 
 def buscar_titulo_descripcion(dirindex):
     query = simpledialog.askstring(
-        'Buscar por título', 'Introduzca una palabra que esté en el título y la descripcion del tema')
+        'Buscar por título y descripción', 'Introduzca una palabra que esté en el título y la descripcion del tema')
     ix = open_dir(dirindex)
 
     with ix.searcher() as searcher:
@@ -106,13 +106,13 @@ def buscar_fecha(dirindex):
         print ("Error: Formato de fecha incorrecto")
 
 
-def buscar_categoria(dirindex):
+def buscar_categorias(dirindex):
     def listar_busqueda(event):
         query = w.get()
         ix = open_dir(dirindex)
 
         with ix.searcher() as searcher:
-            myquery = QueryParser("categoria", ix.schema).parse(query)
+            myquery = QueryParser("categorias", ix.schema).parse(query)
             results = searcher.search(myquery)
             imprimir_resultados(results)
 
@@ -120,15 +120,15 @@ def buscar_categoria(dirindex):
     ix = open_dir(dirindex)
 
     with ix.searcher() as searcher:
-        myquery = QueryParser("categoria", ix.schema,
+        myquery = QueryParser("categorias", ix.schema,
                             group=qparser.NotGroup).parse(query)
         results = searcher.search(myquery)
         values =[]
         for r in results:
-            values.append(r['categoria'])
+            values.append(r['categorias'])
 
     v = Toplevel()
-    lb = Label(v, text="Buscar evento por categoria:")
+    lb = Label(v, text="Buscar evento por categorias:")
     lb.pack(side = LEFT)
 
 
@@ -139,7 +139,7 @@ def buscar_categoria(dirindex):
 
 
 def get_schema():
-    return Schema(titulo=TEXT(stored=True), descripcion=TEXT(stored=True), categoria=TEXT(stored=True), fechaFin=DATETIME(stored=True),fechaInicio=DATETIME(stored=True),nombrefichero=ID(stored=True))
+    return Schema(titulo=TEXT(stored=True), descripcion=TEXT(stored=True), categorias=KEYWORD(stored=True), fechaFin=DATETIME(stored=True),fechaInicio=DATETIME(stored=True),nombrefichero=ID(stored=True))
 
 
 def add_doc(writer, path, docname):
@@ -147,13 +147,13 @@ def add_doc(writer, path, docname):
         fileobj = open(path+'/'+docname, "rb")
         titulo = fileobj.readline().strip().decode()
         desc = fileobj.readline().strip().decode()
-        categoria = fileobj.readline().strip().decode()
+        categorias = fileobj.readline().strip().decode()
         fechaInicio = fileobj.readline().strip().decode()
         fechaInicio = datetime.strptime(fechaInicio, '%d/%m/%Y %H:%M')
         fechaFin = fileobj.readline().strip().decode()
         fechaFin = datetime.strptime(fechaFin, '%d/%m/%Y %H:%M')
         fileobj.close()
-        writer.add_document(titulo=titulo, descripcion=desc, categoria=categoria, fechaInicio=fechaInicio,
+        writer.add_document(titulo=titulo, descripcion=desc, categorias=categorias, fechaInicio=fechaInicio,
         fechaFin=fechaFin, nombrefichero=docname)
         print ("Creado indice para fichero " + docname)
     except:
@@ -172,8 +172,8 @@ def buscar_titulo_descripcion_menu():
 def buscar_fecha_menu():
     buscar_fecha("Index")
 
-def buscar_categoria_menu():
-    buscar_categoria("Index")
+def buscar_categorias_menu():
+    buscar_categorias("Index")
 
 
 if __name__ == '__main__':
@@ -189,7 +189,7 @@ if __name__ == '__main__':
 
     editmenu.add_command(label="Titulo y descripcion", command=buscar_titulo_descripcion_menu)
     editmenu.add_command(label="Fecha", command=buscar_fecha_menu)
-    editmenu.add_command(label="Categoria", command=buscar_categoria_menu)
+    editmenu.add_command(label="categorias", command=buscar_categorias_menu)
     menubar.add_cascade(label="Buscar", menu=editmenu)
 
     root.config(menu=menubar)
