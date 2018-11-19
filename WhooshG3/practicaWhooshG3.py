@@ -9,35 +9,73 @@ from tkinter import *
 from tkinter import simpledialog
 from tkinter import messagebox
 from bs4 import BeautifulSoup
+import ssl
 
 
 ##############################Método para crear los ficheros para su búsqueda
 
 def imprime_eventos():
-    fichero = urllib.request.urlopen("https://foros.derecho.com/foro/20-Derecho-Civil-General")
-    documento = BeautifulSoup(fichero, "lxml")
-    eventos = documento.find_all("li", class_="threadbit")
+    f=urllib.request.urlopen("https://www.sevilla.org/ayuntamiento/alcaldia/comunicacion/calendario/agenda-actividades", context=ssl.SSLContext(ssl.PROTOCOL_TLSv1))
+    s = BeautifulSoup(f,"lxml")
+    eventos = s.find_all("article", class_="vevent")
     if not os.path.exists("Eventos"):
         os.mkdir("Eventos")
     else:
         shutil.rmtree("Eventos")
         os.mkdir("Eventos")
     #Por cada post: Título, link al tema, autor, fecha, número de respuestas, y número de visitas
-    i=1
-    for evento in eventos:
-        titulo = ""#TODO
-        descripcion = "" #TODO
-        categorias = ""#TODO
-        fechaInicio = ""#TODO
-        fechaFin= ""#TODO
+    a=0
+    for i in eventos:
+        titulo = i.find_all("span", class_="summary")[0].string
+        descripcion = i.find_all("p", class_="description")
+        categories = i.find_all("li", class_="category")[0].find_all("span")
+        categorias = ""
+        x=0
+        for cat in categories:
+            if x==0:
+                categorias = categorias + cat.string
+                x=x+1
+            else:
+                categorias = categorias + "," + cat.string
+                x=x+1
 
-        with open('Eventos/'+str(i)+'.txt', 'w') as f:
+
+        fecha = i.find("div", class_="documentByLine")
+
+        if(len(fecha.find_all("abbr"))==0):
+            fechaInicio = str(fecha.contents[0].string).strip()
+            fechaFin = str(fecha.contents[0].string).strip()
+        elif(len(fecha.find_all("abbr"))==1):
+            fechaInicio = fecha.find_all("abbr")[0].get("title")
+            fechaFin = fecha.find_all("abbr")[0].get("title")
+        elif(len(fecha.find_all("abbr"))==2):
+            fechaInicio = fecha.find_all("abbr")[0].get("title")
+            fechaFin = fecha.find_all("abbr")[1].get("title")
+
+        if(len(fechaInicio)>10):
+            fechaInicio = str(fechaInicio)
+            fechaInicio = fechaInicio.replace("T"," ")
+            fechaInicio = fechaInicio[:22] + fechaInicio[23:]
+        else:
+            fechaInicio=fechaInicio+" 00:00:00+0000"
+
+        if(len(fechaFin)>10):
+            fechaFin = str(fechaFin)
+            fechaFin = fechaFin.replace("T"," ")
+            fechaFin = fechaFin[:22] + fechaFin[23:]
+        else:
+            fechaFin=fechaFin+" 00:00:00+0000"
+
+        with open('Eventos/'+str(a)+'.txt', 'w') as f:
             f.write(titulo+'\n')
-            f.write(descripcion+'\n')
+            if(len(descripcion)>0):
+                f.write(str(descripcion)+'\n')
+            else:
+                f.write('\n')
             f.write(categorias+'\n')
             f.write(fechaInicio+'\n')
             f.write(fechaFin+'\n')
-        i=i+1
+        a=a+1
 
 ##############################################################################
 
@@ -99,7 +137,7 @@ def buscar_fecha(dirindex):
     ix=open_dir(dirindex)
     try:
         with ix.searcher() as searcher:
-            query = QueryParser("fecha", ix.schema).parse(query)
+            query = MultifieldParser(["fechaInicio","fechaFin"], ix.schema).parse(query)
             results = searcher.search(query)
             imprimir_resultados(results)
     except:
@@ -139,7 +177,7 @@ def buscar_categorias(dirindex):
 
 
 def get_schema():
-    return Schema(titulo=TEXT(stored=True), descripcion=TEXT(stored=True), categorias=KEYWORD(stored=True), fechaFin=DATETIME(stored=True),fechaInicio=DATETIME(stored=True),nombrefichero=ID(stored=True))
+    return Schema(titulo=TEXT(stored=True), descripcion=TEXT(stored=True), categorias=KEYWORD(stored=True, commas=True), fechaFin=DATETIME(stored=True),fechaInicio=DATETIME(stored=True),nombrefichero=ID(stored=True))
 
 
 def add_doc(writer, path, docname):
@@ -149,9 +187,9 @@ def add_doc(writer, path, docname):
         desc = fileobj.readline().strip().decode()
         categorias = fileobj.readline().strip().decode()
         fechaInicio = fileobj.readline().strip().decode()
-        fechaInicio = datetime.strptime(fechaInicio, '%d/%m/%Y %H:%M')
+        fechaInicio = datetime.strptime(fechaInicio, '%Y-%m-%d %H:%M:%S%z')
         fechaFin = fileobj.readline().strip().decode()
-        fechaFin = datetime.strptime(fechaFin, '%d/%m/%Y %H:%M')
+        fechaFin = datetime.strptime(fechaFin, '%Y-%m-%d %H:%M:%S%z')
         fileobj.close()
         writer.add_document(titulo=titulo, descripcion=desc, categorias=categorias, fechaInicio=fechaInicio,
         fechaFin=fechaFin, nombrefichero=docname)
@@ -161,7 +199,7 @@ def add_doc(writer, path, docname):
 
 
 def indexar():
-    imprime_posts()
+    imprime_eventos()
     crea_index("Eventos", "Index")
 
 
