@@ -170,7 +170,7 @@ def add_doc(writer, path, docname):
 
 
 def indexar():
-    #imprime_posts()
+    imprime_posts()
     crea_index("Threads", "Index")
 
 
