@@ -14,4 +14,7 @@ class UsuarioForm(forms.Form):
 class AstistaForm(forms.Form):
     nombre = forms.CharField(label='Nombre', max_length=100)
     pais = forms.CharField(label='Pais', max_length=100)
+
+class GetArtistasUsuario(forms.Form):
+    name = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'placeholder' : 'Buscar'}))
     
