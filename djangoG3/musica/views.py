@@ -1,11 +1,7 @@
 from django.shortcuts import render, redirect
 from . import models
 from . import forms
-<<<<<<< HEAD
-from .models import Discografica, Artista
-=======
-from .models import Discografica, Artista, Tiempo
->>>>>>> 5f6fdcc7e88c42e3aa66653e4babe350f3fb2045
+from .models import Discografica, Artista, Tiempo, Usuario
 
 def index(request):
     return render(request, 'index.html')
@@ -24,6 +20,20 @@ def newDiscografica(request):
     context = {'form' : form}
     return render(request, 'newDiscografica.html', context)
 
+def newUsuario(request):
+    if request.method == 'POST':
+        form = forms.UsuarioForm(request.POST)
+        if form.is_valid():
+            new_usuario = Usuario(username=request.POST['username'],password=request.POST['password'],nombre=request.POST['nombre'], apellidos=request.POST['apellidos'], email=request.POST['email'])
+            new_usuario.save()
+            return redirect('')
+
+    else:
+        form = forms.UsuarioForm()
+
+    context = {'form' : form}
+    return render(request, 'newUsuario.html', context)
+
 def newArtista(request):
     if request.method == 'POST':
         form = forms.ArtistaForm(request.POST)
@@ -40,11 +50,6 @@ def newArtista(request):
 
     context = {'form' : form}
     return render(request, 'newArtista.html', context)
-# def topArtistas(request):
-#     tiempos = Tiempo.objects.filter(artista_exact(''))
-#     artistas = Artista.objects.values('id').annotate(tiempo_count=Count('jobtitle')).order_by('tiempo')[:2]
-#     context = {'artistas' : artistas}
-#     return render(request, 'artistas.html', context)
 
 def getArtistasUsuario(request):
     form = forms.GetArtistasUsuario(request.GET)

@@ -9,7 +9,7 @@ class DiscograficaForm(forms.Form):
         widget=forms.TextInput(attrs={'placeholder' : 'Pais'}))
     
 class UsuarioForm(forms.Form):
-    nombre = forms.CharField(label='Nombre', max_length=100)
+    nombre = forms.CharField(label='Nombre', max_length=20)
     username = forms.CharField(label='Nombre de usuario', max_length=100)
     password = forms.CharField(label='Password', max_length=100)
     apellidos = forms.CharField(label='Apellidos', max_length=100)

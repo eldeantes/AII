@@ -7,5 +7,5 @@ urlpatterns = [
     path('',views.index, name='index'),
     path('newDiscografica/',views.newDiscografica, name='newDiscografica'),
     path('newArtista/',views.newArtista, name='newArtista'),
-    path('top-artistas/', views.topUsuarios, name='topUsuarios')
+    path('newUsuario/',views.newUsuario, name='newUsuario')
 ]
