@@ -44,9 +44,18 @@ class Artista(models.Model):
     nombre = models.CharField(max_length=30)
     pais = models.CharField(max_length=30)
     fechNac = models.DateField()
-    estilo = models.ManyToManyField(Estilo)
 
+    estilo = models.ManyToManyField(Estilo)
     discografica = models.ForeignKey(Discografica, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.nombre
+
+class Tiempo(models.Model):
+    tiempo = models.IntegerField()
+
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    artista = models.ForeignKey(Artista, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.usuario.name + '(' + self.tiempo + ')'
