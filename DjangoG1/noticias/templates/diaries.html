@@ -1,0 +1,40 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Diarios</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+
+  <link rel="icon" href="https://www.freeiconspng.com/uploads/movie-icon-2.png">
+
+  <link rel="stylesheet" href="css/styles.css?v=1.0">
+
+</head>
+
+<body>
+    <div>
+    </div>
+    <div>
+        <h1>Lista de diarios</h1>
+    </div>
+
+    <a type="button" href="{% url 'create-diary' %}">Crear diario</a><br><br>
+
+    {% for d in diaries %}
+    <div>
+        <div>
+            Nombre: {{d.name}}
+        </div>
+        <div>
+            País: {{d.country}}
+        </div>
+        <div>
+            Idioma: {{d.language}}<br><br>
+        </div>
+    </div>
+    {% endfor %}
+</body>
+</html>
