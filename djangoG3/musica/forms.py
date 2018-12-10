@@ -24,4 +24,6 @@ class ArtistaForm(forms.Form):
         widget=forms.TextInput(attrs={'placeholder' : 'YYYY-mm-dd'}))
     estilo = forms.ModelMultipleChoiceField(queryset=Estilo.objects.all())
     discografica = forms.ModelChoiceField(Discografica.objects.all())
-    
+
+class GetArtistasUsuario(forms.Form):
+    name = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'placeholder' : 'Buscar'}))
