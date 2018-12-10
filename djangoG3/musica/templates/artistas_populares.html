@@ -1,0 +1,40 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Artistas Populares</title>
+
+</head>
+
+<body>
+    <div>
+    </div>
+    <div>
+        <h1>Artistas Populares</h1>
+    </div>
+
+    <a type="button" href="{% url 'artistas' %}">Ver todos los artistas</a><br><br>
+
+    {% for t in artistas %}
+    <div>
+        <div>
+            Nombre: {{t.nombre}}
+        </div>
+        <div>
+            País: {{t.pais}}
+        </div>
+        <div>
+            Fecha nacimiento: {{t.fechNac}}
+        </div>
+        <!--<div>
+            Estilo: {{t.estilo.name}}
+        </div>-->
+        <div>
+            Discografica: {{t.discografica}}
+        </div><br><br>
+    </div>
+    {% endfor %}
+</body>
+</html>

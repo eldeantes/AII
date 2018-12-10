@@ -1,0 +1,29 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Artistas</title>
+
+</head>
+
+<body>
+    <div>
+    </div>
+    <div>
+        <h1>Artistas</h1>
+    </div>
+
+    <a type="button" href="{% url 'artistas_populares' %}">Ver artistas populares</a><br><br>
+
+    {% for t in artistas %}
+    <div>
+        <div>
+            Nombre: {{t}}<br>
+            Discografica: {{t.discografica}}
+        </div>
+        <br>
+    {% endfor %}
+</body>
+</html>
