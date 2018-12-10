@@ -23,3 +23,16 @@ def createDiary(request):
 
     context = {'form' : form}
     return render(request, 'createDiary.html', context)
+
+def getDiariesName(request):
+    form = forms.GetDiariesName(request.GET)
+    if form.is_valid():
+        diaries = Diary.objects.filter(name__contains=request.GET['name'])
+        context = {'diaries' : diaries}
+        return render(request, 'diaries.html', context)
+
+    else:
+        form = forms.GetDiariesName()
+
+    context = {'form' : form}
+    return render(request, 'getDiariesByName.html', context)

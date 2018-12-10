@@ -7,3 +7,6 @@ class CreateDiary(forms.Form):
         widget=forms.TextInput(attrs={'placeholder' : 'País'}))
     language = forms.CharField(max_length=20,
         widget=forms.TextInput(attrs={'placeholder' : 'Idioma'}))
+
+class GetDiariesName(forms.Form):
+    name = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'placeholder' : 'Buscar'}))

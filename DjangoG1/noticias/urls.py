@@ -20,5 +20,6 @@ from . import views
 urlpatterns = [
     #path('admin/', admin.site.urls),
     path('diarios/', views.diaries, name='diaries'),
-    path('create-diary/', views.createDiary, name='create-diary')
+    path('create-diary/', views.createDiary, name='create-diary'),
+    path('get-diaries-name/', views.getDiariesName, name='get-diaries-name')
 ]
