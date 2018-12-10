@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(Usuario)
 admin.site.register(Discografica)
 admin.site.register(Artista)
+admin.site.register(Estilo)
