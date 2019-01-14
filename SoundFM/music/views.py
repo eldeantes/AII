@@ -42,3 +42,66 @@ def topArtistas(request):
     }
 
     return render(request, 'top-artistas.html',context)
+
+def populate(request):
+    #Datos de artista
+    file = open('music/data/artists.dat','r', encoding="utf8") 
+
+    i = 0
+
+    for line in file:
+        print(line)
+        #La primera linea no aporta información
+        if(i!=0):
+            datos = line.split('\t')
+            artista = Artista(idArtista=datos[0], nombre=datos[1], url=datos[2], pictureUrl=datos[3])
+            artista.save()
+
+        i = i+1
+    file.close()
+
+    file = open('music/data/tags.dat', 'r', encoding='latin-1')
+    i = 0
+    for line in file:
+        print(line)
+        if(i!=0):
+            datos = line.split('\t')
+            tag = Etiqueta(idTag = datos[0], tagValue=datos[1])
+            tag.save()
+        i = i+1
+
+    file.close()
+
+    file = open('music/data/user_artists.dat', 'r', encoding='utf8')
+    i = 0
+    for line in file:
+        print(line)
+        if(i!=0):
+            datos = line.split('\t')
+            usuarioArtista = UsuarioArtista(idUsuario = datos[0], idArtista=datos[1], tiempoEscucha=datos[2])
+            usuarioArtista.save()
+        i = i+1
+
+    file.close()
+
+    file = open('music/data/user_taggedartists.dat', 'r', encoding='utf8')
+    i = 0
+    for line in file:
+        print(line)
+        if(i!=0):
+            datos = line.split('\t')
+            datos[3] = datos[3].strip()
+            datos[4] = datos[4].strip()
+            datos[5] = datos[5].strip()
+            
+            date = datos[3]+'/'+datos[4]+'/'+datos[5]
+
+            date = datetime.datetime.strptime(date, "%d/%m/%Y")
+            fmdate = date.replace(tzinfo=timezone('UTC'))
+            usuarioEtiquetaArtista = UsuarioEtiquetaArtista(idUsuario = datos[0], idArtista=datos[1], idTag=datos[2], fecha = fmdate)
+            usuarioEtiquetaArtista.save()
+        i = i+1
+
+    file.close()
+    return render(request, 'index.html')
+

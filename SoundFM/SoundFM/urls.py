@@ -22,4 +22,5 @@ urlpatterns = [
     path('ver-artistas/<slug:userId>/',views.verArtistas,name='verArtistas'),
     path('top-artistas/',views.topArtistas, name='topArtistas'),
     path('admin/', admin.site.urls),
+    path('populate/',views.populate,name='populate')
 ]
