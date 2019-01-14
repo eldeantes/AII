@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SoundFM</title>
+</head>
+<body>
+<h1>
+    Índice de la web
+</h1>
+
+Introduzca el id del usuario cuyos artistas quiera buscar: 
+  <input type="number" id="userId_input" name="userId">
+  <button type="button" value="Ver artistas" onclick="window.location.href='ver-artistas/'+document.getElementById('userId_input').value">Ver artistas</button>
+<br><br>
+
+Ver el top tres de artistas más escuchados por los usuarios: <a href="top-artistas"><button>Top tres artistas</button></a>
+<br><br>
+
+Buscar usuarios parecidos (introduzca el id del usuario con el que comparar):
+<input type="number" id="userId_input" name="userId">
+  <button type="button" value="Ver artistas" onclick="window.location.href='comparar-usuarios/'+document.getElementById('userId_input').value">Buscar usuarios</button>
+<br><br>
+
+
+Recomendar libros a usuario:
+<input type="number" id="userId_input" name="userId">
+  <button type="button" value="Ver artistas" onclick="window.location.href='recomendar/'+document.getElementById('userId_input').value">Buscar libros</button>
+
+
+</body>
+</html>

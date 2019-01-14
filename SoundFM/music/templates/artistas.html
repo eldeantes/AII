@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SoundFM</title>
+</head>
+<body>
+<h1>Ver artistas del usuario {{userId}}</h1>
+
+<a href="/">Volver</a>
+<ul>
+{% for entry in datos %}
+    <li>Artista número {{entry.0.idArtista}} <b>{{entry.0}}</b> (tiempo de escucha: {{entry.1.tiempoEscucha}} segundos)</li>
+{%endfor%}
+</ul>
+
+</body>
+</html>
