@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('search', views.search),
     path('populateDB/', views.populateDB),
+    path('top/', views.top),
 ]
