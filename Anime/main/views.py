@@ -28,6 +28,29 @@ def loadRS(request):
     loadDict()
     return render(request,'loadRS.html')
 
+#APARTADO A
+def search(request):
+    if request.method=='GET':
+        form = GenreForm(request.GET, request.FILES)
+        if form.is_valid():
+            print("valido")
+            requested = form.cleaned_data['genre']
+            print(requested)
+            allAnimes = Anime.objects.all()
+            print(allAnimes)
+            animes = []
+            for anime in allAnimes:
+                genres = []
+                allGenres = anime.genre.all()
+                print(allGenres)
+                for genre in allGenres:
+                    genres.append(genre.name)
+                if requested in genres:
+                    animes.append(anime)
+                return render(request,'animes_genre.html', {'animes':animes})
+    form=GenreForm()
+    return render(request,'search_genre.html', {'form':form })
+
 # APARTADO C
 def similarAnimes(request):
     anime = None
@@ -65,3 +88,4 @@ def recommendedAnimes(request):
                 item = Anime.objects.get(pk=re[1])
                 items.append(item)
             return render(request,'recommendationItems.html', {'userId': userId, 'items': items})
+
