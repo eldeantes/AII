@@ -11,7 +11,7 @@ class Anime(models.Model):
     title = models.CharField(max_length=100)
     genre = models.ManyToManyField(Genre)
     formato = models.CharField(max_length=50)
-    numEpisodes = models.IntegerField()
+    numEpisodes = models.CharField(max_length=100)
 
     def __str__(self):
         return self.title
