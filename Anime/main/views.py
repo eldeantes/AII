@@ -13,7 +13,7 @@ def loadDict():
         userid = int(ra.userId)
         itemid = int(ra.animeId)
         rating = float(ra.rating)
-        Prefs.setdefault(user, {})
+        Prefs.setdefault(userid, {})
         Prefs[userid][itemid] = rating
     shelf['Prefs']=Prefs
     shelf['ItemsPrefs']=transformPrefs(Prefs)

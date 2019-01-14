@@ -25,10 +25,7 @@ with open('data/anime.csv', encoding='utf-8-sig') as csvfile:
         		genre = Genre(name=genre_name)
         		genre.save()
 
-
         	anime.genre.add(Genre.objects.get(name=genre_name))
-
-        
 
         print(anime)
 
