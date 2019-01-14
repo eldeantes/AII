@@ -21,4 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('search', views.search),
     path('populateDB/', views.populateDB),
+    path('loadRS', views.loadRS),
+    path('recommendedAnimes', views.recommendedAnimes),
+    path('similarAnimes', views.similarAnimes),
+
 ]
