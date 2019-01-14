@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>Recommender System Anime</title>
+</head>
+<body>
+{% include 'header.html' %}
+<h1>Recommended animes for the UserID: {{userId}}</h1>
+{% for item in items %}
+<ul>
+    <li>
+        <p>ID: {{item.animeId}}</p>
+        <p>Title: {{item.title}}</p>
+        <p>Genres: {{item.genre.all}}</p>
+        {% for g in item.genre.all %}
+            <p>Genre: {{g.name}}</p>
+        {% empty %}
+            <p>Anime has no genres</p>
+        {% endfor %}
+    </li>
+</ul>
+{% empty %}
+<h2> Insufficient user data </h2>
+{% endfor %}
+</body>
+</html>

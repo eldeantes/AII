@@ -1,0 +1,19 @@
+<html>
+<head>
+<title>Recommender System Anime</title>
+</head>
+<body>
+{% include 'header.html' %}
+<section>
+<h1>Three anime more like to {{anime.title}} are:</h1>
+<l>
+{% for a in animes %}
+<li>
+    <p>ID: {{a.animeId}}</p>
+    <p>Titulo: {{a.title}}</p>
+</li>
+{% endfor %}
+</l>
+</section>
+</body>
+</html>
