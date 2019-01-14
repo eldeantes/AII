@@ -31,3 +31,14 @@ with open('data/anime.csv', encoding='utf-8-sig') as csvfile:
         
 
         print(anime)
+
+with open('data/ratings.csv', encoding='utf-8-sig') as csvfile:
+    reader = csv.DictReader(csvfile, delimiter=';')
+    for row in reader:
+        anime_id = row['anime_id']
+        user_id = row['user_id']
+        rating = row['rating']
+        
+        ratingObject = Rating(animeId=anime_id, userId=user_id, rating=rating)
+
+        print(rating)
